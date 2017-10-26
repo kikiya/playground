@@ -13,7 +13,7 @@ lazy val `employee-api` = (project in file("employee-api"))
     libraryDependencies ++= Seq(
       lagomJavadslApi,
       lombok,
-      "org.mongodb" % "mongodb-driver-reactivestreams" % "1.6.0"
+      "com.lightbend.akka" %% "akka-stream-alpakka-slick" % "0.14"
     )
   )
 

@@ -3,6 +3,7 @@
  */
 package com.example.employee.impl;
 
+import akka.stream.alpakka.slick.javadsl.SlickSession;
 import com.example.employee.api.EmployeeService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -21,11 +22,7 @@ public class EmployeeModule extends AbstractModule implements ServiceGuiceSuppor
 
       bindService(EmployeeService.class, EmployeeServiceImpl.class);
       bind(SimpleCrudTemplate.class).to(EmployeeTemplate.class);
+
   }
 
-    @Provides
-    @Singleton
-    public MongoCollection mongoCollection(){
-        return MongoClients.create().getDatabase("salaries").getCollection("employee_chicago_salaries");
-    }
 }

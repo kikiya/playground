@@ -3,6 +3,9 @@ package com.example.employee.impl;
 import akka.Done;
 import akka.NotUsed;
 import akka.stream.Materializer;
+import akka.stream.alpakka.slick.javadsl.Slick;
+import akka.stream.alpakka.slick.javadsl.SlickRow;
+import akka.stream.alpakka.slick.javadsl.SlickSession;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
 import com.example.employee.api.Employee;
@@ -10,33 +13,44 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.mongodb.client.model.Filters;
-import com.mongodb.reactivestreams.client.MongoCollection;
-import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 @Singleton
 public class EmployeeTemplate implements SimpleCrudTemplate<Employee> {
 
-    private  MongoCollection collection;
-    private  Materializer materializer;
-    private ObjectMapper mapper;
+    private final Materializer materializer;
+    private final ObjectMapper mapper;
+    private final SlickSession slickSession;
 
     @Inject
-    public EmployeeTemplate(MongoCollection collection, Materializer materializer){
-        this.collection = collection;
+    public EmployeeTemplate(Materializer materializer){
+        slickSession = SlickSession.forConfig("slick-postgres");
         this.materializer = materializer;
         this.mapper = new ObjectMapper();
     }
 
     @Override
     public CompletionStage<Done> create(Employee employee) throws JsonProcessingException {
-        String employeeString = mapper.writeValueAsString(employee);
-        final Source<Document, NotUsed> source =
-                Source.fromPublisher(collection.insertOne(Document.parse(employeeString)));
-        return source.runWith(Sink.ignore(), materializer);
+
+        final CompletionStage<Done> done =
+                Source
+                        .from()
+                        .runWith(
+                                Slick.<Employee>sink(
+                                        slickSession,
+                                        // add an optional second argument to specify the parallism factor (int)
+                                        (e) -> "INSERT INTO import.employee_chicago_salaries " +
+                                                "(" + employee.name + ",'" + employee.title+ ",'"
+                                                + employee.department+ ",'" + employee.salary+ ",'"
+                                                + employee.taxesOwed+ ")"
+                                ),
+                                materializer
+                        );
+
+        return done;
     }
 
     @Override
