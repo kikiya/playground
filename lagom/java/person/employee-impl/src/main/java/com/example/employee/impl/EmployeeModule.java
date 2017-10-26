@@ -1,9 +1,9 @@
 /*
  * 
  */
-package com.example.person.impl;
+package com.example.employee.impl;
 
-import com.example.person.api.PersonService;
+import com.example.employee.api.EmployeeService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -12,15 +12,15 @@ import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
 
 /**
- * The module that binds the PersonService so that it can be served.
+ * The module that binds the EmployeeService so that it can be served.
  */
-public class PersonModule extends AbstractModule implements ServiceGuiceSupport {
+public class EmployeeModule extends AbstractModule implements ServiceGuiceSupport {
 
   @Override
   protected void configure() {
 
-      bindService(PersonService.class, PersonServiceImpl.class);
-      bind(CrudTemplate.class).to(PersonTemplate.class);
+      bindService(EmployeeService.class, EmployeeServiceImpl.class);
+      bind(CrudTemplate.class).to(EmployeeTemplate.class);
   }
 
     @Provides

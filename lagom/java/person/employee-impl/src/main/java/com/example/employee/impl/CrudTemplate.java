@@ -1,4 +1,4 @@
-package com.example.person.impl;
+package com.example.employee.impl;
 
 import akka.Done;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +11,7 @@ public interface CrudTemplate<T> {
 
     CompletionStage<Done> create(T t) throws JsonProcessingException;
 
-    CompletionStage<List<T>> retrieve(String id);
+    CompletionStage<T> retrieve(String id);
 
     CompletionStage<Done> update(T t) throws JsonProcessingException;
 

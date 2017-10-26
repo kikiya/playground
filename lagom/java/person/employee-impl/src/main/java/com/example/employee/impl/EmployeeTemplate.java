@@ -1,11 +1,11 @@
-package com.example.person.impl;
+package com.example.employee.impl;
 
 import akka.Done;
 import akka.NotUsed;
 import akka.stream.Materializer;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
-import com.example.person.api.Employee;
+import com.example.employee.api.Employee;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 @Singleton
-public class PersonTemplate implements CrudTemplate<Employee> {
+public class EmployeeTemplate implements CrudTemplate<Employee> {
 
     private  MongoCollection collection;
     private  Materializer materializer;
     private ObjectMapper mapper;
 
     @Inject
-    public PersonTemplate(MongoCollection collection, Materializer materializer){
+    public EmployeeTemplate(MongoCollection collection, Materializer materializer){
         this.collection = collection;
         this.materializer = materializer;
         this.mapper = new ObjectMapper();
@@ -40,12 +40,12 @@ public class PersonTemplate implements CrudTemplate<Employee> {
     }
 
     @Override
-    public CompletionStage<List<Employee>> retrieve(String id) {
+    public CompletionStage<Employee> retrieve(String id) {
         //todo need to use a different field name
         final Source<Document, NotUsed>  source = Source.fromPublisher(collection.find(Filters.eq("Name", id)));
-        CompletionStage<List<Employee>> employees = source.map(doc -> mapper.readValue(doc.toJson(), Employee.class))
-                .runWith(Sink.seq(), materializer);
-        return employees;
+        CompletionStage<Employee> employee = source.map(doc -> mapper.readValue(doc.toJson(), Employee.class))
+                .runWith(Sink.head(), materializer);
+        return employee;
     }
 
     @Override

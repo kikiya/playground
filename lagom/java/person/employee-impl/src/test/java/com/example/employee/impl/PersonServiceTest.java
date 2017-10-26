@@ -1,7 +1,7 @@
 /*
  * 
  */
-package com.example.person.impl;
+package com.example.employee.impl;
 
 import static com.lightbend.lagom.javadsl.testkit.ServiceTest.defaultSetup;
 import static com.lightbend.lagom.javadsl.testkit.ServiceTest.withServer;
@@ -11,14 +11,14 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.example.person.api.GreetingMessage;
-import com.example.person.api.PersonService;
+import com.example.employee.api.EmployeeService;
 
 public class PersonServiceTest {
 
   @Test
   public void shouldStorePersonalizedGreeting() throws Exception {
     withServer(defaultSetup().withCassandra(true), server -> {
-      PersonService service = server.client(PersonService.class);
+      EmployeeService service = server.client(EmployeeService.class);
 
       String msg1 = service.hello("Alice").invoke().toCompletableFuture().get(5, SECONDS);
       assertEquals("Hello, Alice!", msg1); // default greeting

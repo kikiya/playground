@@ -4,10 +4,10 @@ version in ThisBuild := "1.0-SNAPSHOT"
 // the Scala version that will be used for cross-compiled libraries
 scalaVersion in ThisBuild := "2.11.8"
 
-lazy val `person` = (project in file("."))
-  .aggregate(`person-api`, `person-impl`)
+lazy val `employee` = (project in file("."))
+  .aggregate(`employee-api`, `employee-impl`)
 
-lazy val `person-api` = (project in file("person-api"))
+lazy val `employee-api` = (project in file("employee-api"))
   .settings(common: _*)
   .settings(
     libraryDependencies ++= Seq(
@@ -17,7 +17,7 @@ lazy val `person-api` = (project in file("person-api"))
     )
   )
 
-lazy val `person-impl` = (project in file("person-impl"))
+lazy val `employee-impl` = (project in file("employee-impl"))
   .enablePlugins(LagomJava)
   .settings(common: _*)
   .settings(
@@ -29,7 +29,7 @@ lazy val `person-impl` = (project in file("person-impl"))
     )
   )
   .settings(lagomForkedTestSettings: _*)
-  .dependsOn(`person-api`)
+  .dependsOn(`employee-api`)
 
 val lombok = "org.projectlombok" % "lombok" % "1.16.10"
 

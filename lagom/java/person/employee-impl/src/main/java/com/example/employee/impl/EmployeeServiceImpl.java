@@ -1,32 +1,27 @@
 /*
  * 
  */
-package com.example.person.impl;
+package com.example.employee.impl;
 
 import akka.Done;
 import akka.NotUsed;
-import com.example.person.api.Employee;
-import com.example.person.api.PersonService;
+import com.example.employee.api.Employee;
+import com.example.employee.api.EmployeeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
-import com.lightbend.lagom.javadsl.api.deser.RawExceptionMessage;
-import com.lightbend.lagom.javadsl.api.transport.MessageProtocol;
-import com.lightbend.lagom.javadsl.api.transport.TransportErrorCode;
-import org.apache.http.entity.ContentType;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Optional;
 
 /**
- * Implementation of the PersonService.
+ * Implementation of the EmployeeService.
  */
-public class PersonServiceImpl implements PersonService {
+public class EmployeeServiceImpl implements EmployeeService {
 
     private final CrudTemplate crudTemplate;
 
     @Inject
-    public PersonServiceImpl(CrudTemplate crudTemplate) {
+    public EmployeeServiceImpl(CrudTemplate crudTemplate) {
 
         this.crudTemplate = crudTemplate;
     }
@@ -44,7 +39,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public ServiceCall<NotUsed, List<Employee>> retrieveByName(String name){
+    public ServiceCall<NotUsed, Employee> retrieveByName(String name){
         return request -> crudTemplate.retrieve(name);
     }
 

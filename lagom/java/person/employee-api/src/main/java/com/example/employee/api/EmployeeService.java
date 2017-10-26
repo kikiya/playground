@@ -1,7 +1,7 @@
 /*
  * 
  */
-package com.example.person.api;
+package com.example.employee.api;
 
 import akka.Done;
 import akka.NotUsed;
@@ -19,9 +19,9 @@ import static com.lightbend.lagom.javadsl.api.Service.restCall;
  * The person service interface.
  * <p>
  * This describes everything that Lagom needs to know about how to serve and
- * consume the PersonService.
+ * consume the EmployeeService.
  */
-public interface PersonService extends Service {
+public interface EmployeeService extends Service {
 
   /**
    * Example: curl http://localhost:9000/api/employee/find
@@ -29,7 +29,7 @@ public interface PersonService extends Service {
 
   ServiceCall<Employee, Done> addEmployee();
 
-  ServiceCall<NotUsed, List<Employee>> retrieveByName(String name);
+  ServiceCall<NotUsed, Employee> retrieveByName(String name);
 
   ServiceCall<Employee, Done> modifyEmployeeDetails();
 

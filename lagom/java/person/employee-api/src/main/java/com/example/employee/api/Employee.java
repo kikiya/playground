@@ -1,4 +1,4 @@
-package com.example.person.api;
+package com.example.employee.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
