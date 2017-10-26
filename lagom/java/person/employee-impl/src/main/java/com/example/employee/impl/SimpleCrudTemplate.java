@@ -7,7 +7,7 @@ import org.bson.Document;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-public interface CrudTemplate<T> {
+public interface SimpleCrudTemplate<T> {
 
     CompletionStage<Done> create(T t) throws JsonProcessingException;
 

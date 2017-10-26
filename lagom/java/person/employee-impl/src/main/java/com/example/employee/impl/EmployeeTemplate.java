@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 @Singleton
-public class EmployeeTemplate implements CrudTemplate<Employee> {
+public class EmployeeTemplate implements SimpleCrudTemplate<Employee> {
 
     private  MongoCollection collection;
     private  Materializer materializer;
@@ -41,7 +41,6 @@ public class EmployeeTemplate implements CrudTemplate<Employee> {
 
     @Override
     public CompletionStage<Employee> retrieve(String id) {
-        //todo need to use a different field name
         final Source<Document, NotUsed>  source = Source.fromPublisher(collection.find(Filters.eq("Name", id)));
         CompletionStage<Employee> employee = source.map(doc -> mapper.readValue(doc.toJson(), Employee.class))
                 .runWith(Sink.head(), materializer);
@@ -62,6 +61,7 @@ public class EmployeeTemplate implements CrudTemplate<Employee> {
         return source.runWith(Sink.ignore(), materializer);
     }
 
+    @Override
     public CompletionStage<List<Employee>> getDocs (){
         final Source<Document, NotUsed> source = Source.fromPublisher(collection.find().limit(30));
         CompletionStage<List<Employee>> documents  = source.map(doc-> mapper.readValue(doc.toJson(), Employee.class))

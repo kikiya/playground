@@ -20,7 +20,7 @@ public class EmployeeModule extends AbstractModule implements ServiceGuiceSuppor
   protected void configure() {
 
       bindService(EmployeeService.class, EmployeeServiceImpl.class);
-      bind(CrudTemplate.class).to(EmployeeTemplate.class);
+      bind(SimpleCrudTemplate.class).to(EmployeeTemplate.class);
   }
 
     @Provides

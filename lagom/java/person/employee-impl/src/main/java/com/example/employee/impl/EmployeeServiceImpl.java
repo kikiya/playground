@@ -18,10 +18,10 @@ import java.util.List;
  */
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final CrudTemplate crudTemplate;
+    private final SimpleCrudTemplate crudTemplate;
 
     @Inject
-    public EmployeeServiceImpl(CrudTemplate crudTemplate) {
+    public EmployeeServiceImpl(SimpleCrudTemplate crudTemplate) {
 
         this.crudTemplate = crudTemplate;
     }
@@ -39,9 +39,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public ServiceCall<NotUsed, Employee> retrieveByName(String name){
-        return request -> crudTemplate.retrieve(name);
-    }
+    public ServiceCall<NotUsed, Employee> retrieveByName(String name){ return request -> crudTemplate.retrieve(name); }
 
     @Override
     public ServiceCall<Employee, Done> modifyEmployeeDetails() {
@@ -61,11 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public ServiceCall<NotUsed, List<Employee>> findAll() {
-
-        return request ->
-                crudTemplate.getDocs();
-    }
+    public ServiceCall<NotUsed, List<Employee>> findAll() { return request -> crudTemplate.getDocs(); }
 
 
 }

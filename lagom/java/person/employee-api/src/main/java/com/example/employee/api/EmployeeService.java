@@ -24,7 +24,7 @@ import static com.lightbend.lagom.javadsl.api.Service.restCall;
 public interface EmployeeService extends Service {
 
   /**
-   * Example: curl http://localhost:9000/api/employee/find
+   * Example: curl http://localhost:9000/api/employee/all
    */
 
   ServiceCall<Employee, Done> addEmployee();
