@@ -37,10 +37,8 @@ public class EmployeeTemplate implements SimpleCrudTemplate<Employee> {
 
         final CompletionStage<Done> done =
                 Source
-                        .from()
-                        .runWith(
-                                Slick.<Employee>sink(
-                                        slickSession,
+                        .from(
+                                slickSession,
                                         // add an optional second argument to specify the parallism factor (int)
                                         (e) -> "INSERT INTO import.employee_chicago_salaries " +
                                                 "(" + employee.name + ",'" + employee.title+ ",'"
