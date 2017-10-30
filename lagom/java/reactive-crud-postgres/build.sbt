@@ -13,7 +13,8 @@ lazy val `employee-api` = (project in file("employee-api"))
     libraryDependencies ++= Seq(
       lagomJavadslApi,
       lombok,
-      "com.lightbend.akka" %% "akka-stream-alpakka-slick" % "0.14"
+      "com.lightbend.akka" %% "akka-stream-alpakka-slick" % "0.14",
+      "org.postgresql" % "postgresql" % "42.1.4.jre7"
     )
   )
 

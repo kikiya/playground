@@ -1,7 +1,6 @@
 package com.example.employee.impl;
 
 import akka.Done;
-import akka.NotUsed;
 import akka.stream.Materializer;
 import akka.stream.alpakka.slick.javadsl.Slick;
 import akka.stream.alpakka.slick.javadsl.SlickRow;
@@ -9,76 +8,77 @@ import akka.stream.alpakka.slick.javadsl.SlickSession;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
 import com.example.employee.api.Employee;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 @Singleton
 public class EmployeeTemplate implements SimpleCrudTemplate<Employee> {
 
     private final Materializer materializer;
-    private final ObjectMapper mapper;
     private final SlickSession slickSession;
 
     @Inject
     public EmployeeTemplate(Materializer materializer){
         slickSession = SlickSession.forConfig("slick-postgres");
         this.materializer = materializer;
-        this.mapper = new ObjectMapper();
     }
 
     @Override
-    public CompletionStage<Done> create(Employee employee) throws JsonProcessingException {
-
+    public CompletionStage<Done> create(Employee employee) {
         final CompletionStage<Done> done =
-                Source
-                        .from(
-                                slickSession,
-                                        // add an optional second argument to specify the parallism factor (int)
-                                        (e) -> "INSERT INTO import.employee_chicago_salaries " +
-                                                "(" + employee.name + ",'" + employee.title+ ",'"
-                                                + employee.department+ ",'" + employee.salary+ ",'"
-                                                + employee.taxesOwed+ ")"
-                                ),
-                                materializer
-                        );
-
+                Source.single(employee).via(Slick.flow(
+                        slickSession,
+                        employee1 -> "INSERT INTO import.employee_chicago_salaries VALUES ('" + employee.name + "','"
+                                + employee.title+ "','" + employee.department+ "'," + employee.salary+ ")"
+                )).runWith(Sink.ignore(), materializer);
         return done;
     }
 
     @Override
-    public CompletionStage<Employee> retrieve(String id) {
-        final Source<Document, NotUsed>  source = Source.fromPublisher(collection.find(Filters.eq("Name", id)));
-        CompletionStage<Employee> employee = source.map(doc -> mapper.readValue(doc.toJson(), Employee.class))
-                .runWith(Sink.head(), materializer);
-        return employee;
-    }
+    public CompletionStage<Optional<Employee>> retrieve(String id) {
+        String selectEmployee = String.format("SELECT * FROM import.employee_chicago_salaries WHERE Name = '%s' LIMIT 1", id);
+
+       return Slick.source(slickSession,
+                    selectEmployee,
+                (SlickRow row) -> new Employee(row.nextString(), row.nextString(), row.nextString(), row.nextFloat(), 0F))
+                .runWith(Sink.headOption(), materializer);
+       }
 
     @Override
-    public CompletionStage<Done> update(Employee employee) throws JsonProcessingException {
-        String employeeString = mapper.writeValueAsString(employee);
-        final Source<Document, NotUsed>  source = Source.fromPublisher(collection.replaceOne(
-                Filters.eq("Name", employee.name), Document.parse(employeeString) ));
-        return source.runWith(Sink.ignore(), materializer);
+    public CompletionStage<Done> update(Employee employee) {
+        String updateEmployee = String.format("UPDATE import.employee_chicago_salaries\n" +
+                "         SET name='%s', title='%s', department='%s', salary=%f\n" +
+                "         WHERE name = '%s'", employee.name, employee.title,
+                employee.department, employee.salary, employee.name);
+
+        return Source.single(employee).via(Slick.flow(
+                slickSession,
+                employee_ -> updateEmployee
+                )).runWith(Sink.ignore(), materializer);
     }
 
     @Override
     public CompletionStage<Done> delete(String id) {
-        final Source<Document, NotUsed>  source = Source.fromPublisher(collection.deleteOne(Filters.eq("Name", id)));
-        return source.runWith(Sink.ignore(), materializer);
+        String deleteEmployee = String.format("DELETE FROM import.employee_chicago_salaries WHERE Name = '%s' ", id);
+        CompletionStage<Done> done =
+                Source.single(id).via(Slick.flow(
+                        slickSession,
+                        id_ -> deleteEmployee
+                        )).runWith(Sink.ignore(), materializer);
+        return done;
     }
 
     @Override
     public CompletionStage<List<Employee>> getDocs (){
-        final Source<Document, NotUsed> source = Source.fromPublisher(collection.find().limit(30));
-        CompletionStage<List<Employee>> documents  = source.map(doc-> mapper.readValue(doc.toJson(), Employee.class))
+        String sample = "SELECT * FROM import.employee_chicago_salaries LIMIT 100";
+        return Slick.source(slickSession,
+                sample,
+                (SlickRow row) -> new Employee(row.nextString(), row.nextString(), row.nextString(), row.nextFloat(), 0F))
                 .runWith(Sink.seq(), materializer);
-        return  documents;
     }
 
 }

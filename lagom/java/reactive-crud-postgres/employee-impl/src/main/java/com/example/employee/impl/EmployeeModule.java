@@ -3,14 +3,9 @@
  */
 package com.example.employee.impl;
 
-import akka.stream.alpakka.slick.javadsl.SlickSession;
 import com.example.employee.api.EmployeeService;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.lightbend.lagom.javadsl.server.ServiceGuiceSupport;
-import com.mongodb.reactivestreams.client.MongoClients;
-import com.mongodb.reactivestreams.client.MongoCollection;
 
 /**
  * The module that binds the EmployeeService so that it can be served.

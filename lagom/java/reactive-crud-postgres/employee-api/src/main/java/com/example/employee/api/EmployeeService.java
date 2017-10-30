@@ -11,6 +11,7 @@ import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.api.transport.Method;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.lightbend.lagom.javadsl.api.Service.named;
 import static com.lightbend.lagom.javadsl.api.Service.restCall;
@@ -29,7 +30,7 @@ public interface EmployeeService extends Service {
 
   ServiceCall<Employee, Done> addEmployee();
 
-  ServiceCall<NotUsed, Employee> retrieveByName(String name);
+  ServiceCall<NotUsed, Optional<Employee>> retrieveByName(String name);
 
   ServiceCall<Employee, Done> modifyEmployeeDetails();
 

@@ -12,6 +12,8 @@ import com.lightbend.lagom.javadsl.api.ServiceCall;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 
 /**
  * Implementation of the EmployeeService.
@@ -22,35 +24,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Inject
     public EmployeeServiceImpl(SimpleCrudTemplate crudTemplate) {
-
         this.crudTemplate = crudTemplate;
     }
 
     @Override
     public ServiceCall<Employee, Done> addEmployee() {
-        return request -> {
-            try {
-                return crudTemplate.create(request);
-            }catch (JsonProcessingException e){
-                //todo change this to map to a reasonable http error
-                throw new UnsupportedOperationException(e);
-            }
-        };
+        return request ->  crudTemplate.create(request);
     }
 
     @Override
-    public ServiceCall<NotUsed, Employee> retrieveByName(String name){ return request -> crudTemplate.retrieve(name); }
+    public ServiceCall<NotUsed, Optional<Employee>> retrieveByName(String name) {
+        return request -> crudTemplate.retrieve(name);
+    }
 
     @Override
     public ServiceCall<Employee, Done> modifyEmployeeDetails() {
-        return request -> {
-            try {
-                return crudTemplate.update(request);
-            }catch (JsonProcessingException e){
-
-                throw new UnsupportedOperationException(e);
-            }
-        };
+        return request -> crudTemplate.update(request);
     }
 
     @Override
@@ -59,7 +48,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public ServiceCall<NotUsed, List<Employee>> findAll() { return request -> crudTemplate.getDocs(); }
+    public ServiceCall<NotUsed, List<Employee>> findAll() {
+        return request -> crudTemplate.getDocs();
+    }
 
 
 }
