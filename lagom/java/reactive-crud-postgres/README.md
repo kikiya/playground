@@ -23,6 +23,22 @@ directly
 The pgfutter command:
 
     `pgfutter csv employee_chicago_salaries.csv`
+    
+In the file `application.conf` you will need to update this section:
+
+    `# Load using SlickSession.forConfig("slick-postgres")
+    slick-postgres {
+      profile = "slick.jdbc.PostgresProfile$"
+      db {
+        dataSourceClass = "slick.jdbc.DriverDataSource"
+        properties = {
+          driver = "org.postgresql.Driver"
+          url = "jdbc:postgresql://127.0.0.1/postgres"
+          user = kiki
+          password = ""
+        }
+      }
+    }`
 
 To run the application, use `sbt runAll`
 
