@@ -1,24 +1,28 @@
-# Simple Reactive CRUD with MongoDB
+# Simple Reactive CRUD with Postgres
 
-This simple app shows how to use Lagom to build a simple web service that performs Reactive CRUD using MongoDB. 
+This simple app shows how to use Lagom to build a simple web service that performs Reactive CRUD using Alpakka Slick with Postgres. 
 
-The project shows how you would register a MongoDB client to a Lagom module and interact with MongoDB to perform CRUD operations reactively. 
+The project shows how you would register a Slick Template to a Lagom module and interact with Postgres to perform CRUD
+operations with reactive programming. 
 
-The underlying MongoDB client is the Mongo Reactive Streams client which is an impmentatino of Reactive Streams and therefore directly useable by Akka Streams. 
+The Template class uses Alpakka to interact with the Postgres DB. 
 
-The Template class uses Akka Streams to interact with the Mongo collection. 
-
-There's much you can do with a Mongo Collection, but this example is just to show a simple case. 
+There's much you can do with a Postgres + SQL, but this example is just to show a simple case. 
 
 ### note
-    This assumes that if you are using Mongo, you already know how to design your queries or would look to a different source for that information. This project is showing to  submit a query and handle the result, both reactively. 
+    This assumes that if you are using Postgres, you already know how to design your queries or would look to a 
+    different source for that information. This project is showing to submit a query and handle the result,
+    both reactively. 
 
 ## How to Use
-The file CSV file `employee_chicago_salarys` is imported into a local instance of Mongo to start. 
+The file CSV file `employee_chicago_salarys` is imported into a local instance of Postgres to start. 
 
-Use the command:
+To easily do this, pgfutter here https://github.com/lukasmartinelli/pgfutter or you can use the Postgres COPY feature
+directly
 
-    `mongoimport --db salaries --type csv --headerline --file employee_chicago_salaries.csv`
+The pgfutter command:
+
+    `pgfutter csv employee_chicago_salaries.csv`
 
 To run the application, use `sbt runAll`
 
