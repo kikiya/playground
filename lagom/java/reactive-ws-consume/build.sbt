@@ -12,8 +12,7 @@ lazy val `hi-weather-api` = (project in file("hi-weather-api"))
   .settings(common: _*)
   .settings(
     libraryDependencies ++= Seq(
-      lagomJavadslApi,
-      lombok)
+      lagomJavadslApi)
   )
 
 lazy val `hi-weather-impl` = (project in file("hi-weather-impl"))
@@ -21,17 +20,12 @@ lazy val `hi-weather-impl` = (project in file("hi-weather-impl"))
   .settings(common: _*)
   .settings(
     libraryDependencies ++= Seq(
-      lagomJavadslPersistenceCassandra,
-      lagomJavadslKafkaBroker,
       lagomJavadslTestKit,
-      javaWs,
-      lombok
+      javaWs
     )
   )
   .settings(lagomForkedTestSettings: _*)
   .dependsOn(`hi-weather-api`)
-
-val lombok = "org.projectlombok" % "lombok" % "1.16.10"
 
 def common = Seq(
   javacOptions in compile += "-parameters"
