@@ -28,9 +28,13 @@ public class WeatherServiceImpl implements WeatherService{
         return request -> {
             String address = String.format(SERVICE_ADDRESS, zipcode, apiKey);
 
-            CompletionStage<String> response = client.url(address).get().thenApply(r-> r.getBody());
+            CompletionStage<String> response = client.url(address).get().thenApply(r-> happiFy(r.getBody()));
 
             return response;
         };
+    }
+
+    private String happiFy(String weather){
+        return weather.replaceAll("[C|c]loud", "sunshiny");
     }
 }
