@@ -1,3 +1,5 @@
+package com.example;
+
 import com.google.inject.AbstractModule;
 import com.lightbend.lagom.javadsl.server.ServiceGuiceSupport;
 

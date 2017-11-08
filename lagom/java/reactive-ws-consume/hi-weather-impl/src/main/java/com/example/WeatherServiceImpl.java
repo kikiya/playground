@@ -1,4 +1,7 @@
+package com.example;
+
 import akka.NotUsed;
+import com.example.WeatherService;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -7,7 +10,7 @@ import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
-public class WeatherServiceImpl implements WeatherService{
+public class WeatherServiceImpl implements WeatherService {
 
     private final WSClient client;
 
