@@ -1,27 +1,18 @@
 package com.example;
 
-import static akka.event.Logging.DebugLevel;
-
 import akka.Done;
 import akka.NotUsed;
-import akka.japi.pf.PFBuilder;
-import akka.stream.Attributes;
 import akka.stream.Materializer;
 import akka.stream.alpakka.amqp.*;
 import akka.stream.alpakka.amqp.javadsl.AmqpSink;
 import akka.stream.alpakka.amqp.javadsl.AmqpSource;
-import akka.stream.javadsl.*;
+import akka.stream.javadsl.Sink;
+import akka.stream.javadsl.Source;
 import akka.util.ByteString;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 
-import com.rabbitmq.client.Channel;
-
-
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -32,7 +23,7 @@ public class RabbitServiceImpl implements RabbitService {
 
     private final Materializer materializer;
 
-    final String queueName = "amqp-conn-it-spec-simple-queue-" + System.currentTimeMillis();
+    final String queueName = "amqp-conn-it-spec-simple-queue";
     final QueueDeclaration queueDeclaration = QueueDeclaration.create(queueName);
     final AmqpConnectionDetails amqpConnectionDetails;
 
@@ -58,7 +49,7 @@ public class RabbitServiceImpl implements RabbitService {
     }
 
     @Override
-    public ServiceCall<String, Source<String, ?>> readJMS() {
+    public ServiceCall<String, List<String>> readJMS() {
 
         final Integer bufferSize = 10;
         final Source<IncomingMessage, NotUsed> amqpSource = AmqpSource.atMostOnceSource(
@@ -68,9 +59,15 @@ public class RabbitServiceImpl implements RabbitService {
                 ).withDeclarations(queueDeclaration),
                 bufferSize
         );
-        return request ->
+        return request -> {
 
-             completedFuture(amqpSource.map(m -> m.bytes().utf8String()));
+            //#run-source
+            final CompletionStage<List<String>> result =
+                    amqpSource.map(m -> m.bytes().utf8String()).take(10).runWith(Sink.seq(), materializer);
+            //#run-source
+
+            return result;
+        };
     }
 
     @Override
@@ -93,8 +90,10 @@ public class RabbitServiceImpl implements RabbitService {
 
         return words -> {
 
+            words.take(10).map(ByteString::fromString).runWith(amqpSink, materializer);
 
-            return null;
+
+            return completedFuture(amqpSource.map(m -> m.bytes().utf8String()));
 
         };
     }
