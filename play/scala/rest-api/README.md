@@ -1,6 +1,6 @@
-#Simple REST Hello World
+# Simple REST Hello World
 
-##What you’ll build
+## What you’ll build
 
 You’ll build a service that will accept HTTP GET requests at:
 
