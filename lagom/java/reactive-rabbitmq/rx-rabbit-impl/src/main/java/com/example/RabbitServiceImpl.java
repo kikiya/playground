@@ -80,6 +80,7 @@ public class RabbitServiceImpl implements RabbitService {
         );
 
         final Integer bufferSize = 10;
+
         final Source<IncomingMessage, NotUsed> amqpSource = AmqpSource.atMostOnceSource(
                 NamedQueueSourceSettings.create(
                         DefaultAmqpConnection.getInstance(),
@@ -90,10 +91,11 @@ public class RabbitServiceImpl implements RabbitService {
 
         return words -> {
 
+            //add words to the q and
             words.take(10).map(ByteString::fromString).runWith(amqpSink, materializer);
 
-
-            return completedFuture(amqpSource.map(m -> m.bytes().utf8String()));
+            //immediately read words from q
+            return completedFuture(amqpSource.map(m -> "read from q: " + m.bytes().utf8String()));
 
         };
     }
